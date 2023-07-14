@@ -182,17 +182,13 @@ export const Bot = (props: BotProps & { class?: string }) => {
         }
 
         setLoading(true)
+        setMessages((prevMessages) => [...prevMessages, { message: value, type: 'userMessage' }])
         scrollToBottom()
 
         // Send user question and history to API
-        const welcomeMessage = props.welcomeMessage ?? defaultWelcomeMessage
-        const messageList = messages().filter((msg) => msg.message !== welcomeMessage)
-
-        setMessages((prevMessages) => [...prevMessages, { message: value, type: 'userMessage' }])
-
         const body: IncomingInput = {
             question: value,
-            history: messageList
+            history: messages().filter((msg) => msg.message !== props.welcomeMessage ?? defaultWelcomeMessage)
         }
 
         if (props.chatflowConfig) body.overrideConfig = props.chatflowConfig
@@ -338,7 +334,8 @@ export const Bot = (props: BotProps & { class?: string }) => {
                         onSubmit={handleSubmit}
                     />
                 </div>
-
+                <Badge badgeBackgroundColor={props.badgeBackgroundColor} poweredByTextColor={props.poweredByTextColor} botContainer={botContainer} />
+                <BottomSpacer ref={bottomSpacer} />
             </div>
             {sourcePopupOpen() && <Popup isOpen={sourcePopupOpen()} value={sourcePopupSrc()} onClose={() => setSourcePopupOpen(false)}/>}
         </>
